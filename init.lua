@@ -31,6 +31,7 @@ function invisibility.toggle(player, toggle)
     player:set_nametag_attributes({
       color = {a = 0, r = 255, g = 255, b = 255},
     })
+		status = minetest.colorize("#F00"," vanished")
   else
     -- Show player and nametag
     prop = {
@@ -42,10 +43,12 @@ function invisibility.toggle(player, toggle)
 		player:set_nametag_attributes({
 			color = {a = 255, r = 255, g = 255, b = 255},
 		})
+		status = minetest.colorize("#0F0"," unvanished")
   end
 
   -- Update properties
   player:set_properties(prop)
+  return minetest.colorize("#FF0","-!- "..name)..status
 end
 
 -- [register] Privilege
