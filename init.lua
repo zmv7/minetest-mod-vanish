@@ -1,24 +1,24 @@
+invis = {}
 invisibility = {}
-local invisible = {}
 
 -- [function] Get visible
-function invisibility.get(name)
+function invis.get(name)
   if type(name) == "userdata" then
     name = player:get_player_name()
   end
 
-  return invisible[name]
+  return invisibility[name]
 end
 
--- [function] Toggle invisible
-function invisibility.toggle(player, toggle)
+-- [function] Toggle invisibility
+function invis.toggle(player, toggle)
   if type(player) == "string" then
     player = minetest.get_player_by_name(player)
   end
 
   local prop
   local name      = player:get_player_name()
-  invisible[name] = toggle
+  invisibility[name] = toggle
 
   if toggle == true then
     -- Hide player and nametag
@@ -28,9 +28,9 @@ function invisibility.toggle(player, toggle)
       show_on_minimap = false,
       pointable = false,
     }
-    player:set_nametag_attributes({
-      color = {a = 0, r = 255, g = 255, b = 255},
-    })
+    --player:set_nametag_attributes({
+      --color = {a = 0},
+    --})
 		status = minetest.colorize("#F00"," vanished")
   else
     -- Show player and nametag
@@ -40,9 +40,9 @@ function invisibility.toggle(player, toggle)
 			show_on_minimap = true,
 			pointable = true,
 		}
-		player:set_nametag_attributes({
-			color = {a = 255, r = 255, g = 255, b = 255},
-		})
+		--player:set_nametag_attributes({
+		--	color = {a = 35},
+		--})
 		status = minetest.colorize("#0F0"," unvanished")
   end
 
@@ -56,7 +56,7 @@ minetest.register_privilege("vanish", "Allow use of /vanish command")
 
 -- [register] Command
 minetest.register_chatcommand("vanish", {
-  description = "Make yourself or another player invisible",
+  description = "Make yourself or another player invisibility",
   params = "<name>",
   privs = {vanish=true},
   func = function(name, param)
@@ -66,6 +66,6 @@ minetest.register_chatcommand("vanish", {
       return false, "Invalid player \""..param.."\""
     end
 
-    return true, invisibility.toggle(name, not invisible[name])
+    return true, invis.toggle(name, not invisibility[name])
   end,
 })
