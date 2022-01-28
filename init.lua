@@ -24,8 +24,9 @@ function invisibility.toggle(player, toggle)
     -- Hide player and nametag
     prop = {
       visual_size = {x = 0, y = 0},
-      collisionbox = {0, 0, 0, 0, 0, 0},
+      collisionbox = {-0.01, 0, -0.01, 0.01, 0, 0.01},
       show_on_minimap = false,
+      pointable = false,
     }
     player:set_nametag_attributes({
       color = {a = 0, r = 255, g = 255, b = 255},
@@ -36,6 +37,7 @@ function invisibility.toggle(player, toggle)
 			visual_size = {x = 1, y = 1},
 			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
 			show_on_minimap = true,
+			pointable = true,
 		}
 		player:set_nametag_attributes({
 			color = {a = 255, r = 255, g = 255, b = 255},
