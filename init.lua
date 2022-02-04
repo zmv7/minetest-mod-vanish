@@ -23,7 +23,7 @@ function invis.toggle(player, toggle)
   if toggle == true then
     -- Hide player and nametag
     prop = {
-      visual_size = {x = 0, y = 0},
+      visual = "",
       collisionbox = {-0.01, 0, -0.01, 0.01, 0, 0.01},
       show_on_minimap = false,
       pointable = false,
@@ -35,7 +35,7 @@ function invis.toggle(player, toggle)
   else
     -- Show player and nametag
     prop = {
-			visual_size = {x = 1, y = 1},
+			visual = "mesh",
 			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
 			show_on_minimap = true,
 			pointable = true,
