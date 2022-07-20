@@ -1,71 +1,73 @@
-invis = {}
-invisibility = {}
-
--- [function] Get visible
-function invis.get(name)
-  if type(name) == "userdata" then
-    name = player:get_player_name()
-  end
-
-  return invisibility[name]
+local list = core.get_mod_storage()
+local function invis_on(player)
+    player:set_properties({
+        visual_size = {x = 0, y = 0, z = 0},
+        collisionbox = {-0.01, 0, -0.01, 0.01, 0, 0.01},
+        show_on_minimap = false,
+        pointable = false,
+    })
+    player:set_nametag_attributes({color={a=0},text = " "})
 end
-
--- [function] Toggle invisibility
-function invis.toggle(player, toggle)
-  if type(player) == "string" then
-    player = minetest.get_player_by_name(player)
-  end
-
-  local prop
-  local name      = player:get_player_name()
-  invisibility[name] = toggle
-
-  if toggle == true then
-    -- Hide player and nametag
-    prop = {
-      visual = "",
-      collisionbox = {-0.01, 0, -0.01, 0.01, 0, 0.01},
-      show_on_minimap = false,
-      pointable = false,
-    }
-    --player:set_nametag_attributes({
-      --color = {a = 0},
-    --})
-		status = minetest.colorize("#F00"," vanished")
-  else
-    -- Show player and nametag
-    prop = {
-			visual = "mesh",
-			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
-			show_on_minimap = true,
-			pointable = true,
-		}
-		--player:set_nametag_attributes({
-		--	color = {a = 35},
-		--})
-		status = minetest.colorize("#0F0"," unvanished")
-  end
-
-  -- Update properties
-  player:set_properties(prop)
-  return minetest.colorize("#FF0","-!- "..name)..status
-end
-
--- [register] Privilege
-minetest.register_privilege("vanish", "Allow use of /vanish command")
-
--- [register] Command
-minetest.register_chatcommand("vanish", {
-  description = "Make yourself or another player invisibility",
-  params = "<name>",
-  privs = {vanish=true},
-  func = function(name, param)
-    if minetest.get_player_by_name(param) then
-      name = param
-    elseif param ~= "" then
-      return false, "Invalid player \""..param.."\""
+local function invis_off(player)
+    local name = player:get_player_name()
+    if not name then return end
+    player:set_properties({
+		     	visual_size = {x = 1, y = 1, z = 1},
+     			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
+		     	show_on_minimap = true,
+	     		pointable = true,
+  		})
+        local pmeta = player:get_meta()
+    if pmeta and core.get_modpath("ranks") then
+        local rank = pmeta:get_string("rank")
+        local color = pmeta:get_string("rankcolor")
+        player:set_nametag_attributes({color={a=255,r=255,g=255,b=255},text = core.colorize(color,rank).." "..name})
+    else
+        player:set_nametag_attributes({color={a=255,r=255,g=255,b=255},text = name})
     end
-
-    return true, invis.toggle(name, not invisibility[name])
-  end,
-})
+end
+core.register_privilege("vanish","Allows to make players invisible")
+core.register_on_joinplayer(function(player)
+    local name = player:get_player_name()
+    if not name then return end
+    local isinvis = list:get_string(name)
+    if isinvis == "1" then
+        core.after(0.1,function()
+            invis_on(player)
+        end)
+    end
+end)
+core.register_chatcommand("vanish",{
+    description = "Toggle invisibility of player",
+    privs = {vanish=true},
+    params = "<name>",
+    func = function(name,param)
+        if param == "" then param = name end
+        local player = core.get_player_by_name(param)
+        local isinvis = list:get_string(param)
+        if isinvis == "1" then
+            list:set_string(param,"")
+            if player then
+                invis_off(player)
+            end
+            return true, "-!- "..param.." unvanished"
+        else
+            list:set_string(param,"1")
+            if player then
+                invis_on(player)
+            end
+            return true, "-!- "..param.." vanished"
+        end
+end})
+      
+core.register_chatcommand("vanished",{
+    description = "Show list of vanished players",
+    privs = {vanish=true},
+    func = function(name,param)
+        local msg = "Vanished: "
+        local table = list:to_table().fields
+        for nick,val in pairs(table) do
+            msg = msg..nick..", "
+        end
+        return true, msg
+end})
