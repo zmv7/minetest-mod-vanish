@@ -65,9 +65,9 @@ core.register_chatcommand("vanished",{
     privs = {vanish=true},
     func = function(name,param)
         local msg = "Vanished: "
-        local table = list:to_table().fields
-        for nick,val in pairs(table) do
+        local tabl = list:to_table().fields
+        for nick,val in pairs(tabl) do
             msg = msg..nick..", "
         end
-        return true, msg
+        return true, msg:sub(1,-3)
 end})
