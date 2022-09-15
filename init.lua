@@ -1,7 +1,7 @@
 local list = core.get_mod_storage()
 local function invis_on(player)
     player:set_properties({
-        visual_size = {x = 0, y = 0, z = 0},
+        visual = "",
         collisionbox = {-0.01, 0, -0.01, 0.01, 0, 0.01},
         show_on_minimap = false,
         pointable = false,
@@ -12,7 +12,7 @@ local function invis_off(player)
     local name = player:get_player_name()
     if not name then return end
     player:set_properties({
-		     	visual_size = {x = 1, y = 1, z = 1},
+		     	visual = "mesh",
      			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
 		     	show_on_minimap = true,
 	     		pointable = true,
