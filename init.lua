@@ -12,16 +12,18 @@ local function invis_off(player)
     local name = player:get_player_name()
     if not name then return end
     player:set_properties({
-		     	visual = "mesh",
+		     	visual_size = {x = 1, y = 1, z = 1},
      			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
 		     	show_on_minimap = true,
 	     		pointable = true,
   		})
-        local pmeta = player:get_meta()
-    if pmeta and core.get_modpath("ranks") then
-        local rank = pmeta:get_string("rank")
-        local color = pmeta:get_string("rankcolor")
-        player:set_nametag_attributes({color={a=255,r=255,g=255,b=255},text = core.colorize(color,rank).." "..name})
+    if core.get_modpath("ranks") then
+        local rank,color = ranks.get_rank(name)
+        if rank and color then
+            player:set_nametag_attributes({color={a=255,r=255,g=255,b=255},text = core.colorize(color,rank).." "..name})
+        else
+            player:set_nametag_attributes({color={a=255,r=255,g=255,b=255},text = name})
+        end
     else
         player:set_nametag_attributes({color={a=255,r=255,g=255,b=255},text = name})
     end
