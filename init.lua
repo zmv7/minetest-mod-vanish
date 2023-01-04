@@ -1,4 +1,4 @@
-local list = core.get_mod_storage()
+local s = core.get_mod_storage()
 local function invis_on(player)
     player:set_properties({
         visual = "",
@@ -32,7 +32,7 @@ core.register_privilege("vanish","Allows to make players invisible")
 core.register_on_joinplayer(function(player)
     local name = player:get_player_name()
     if not name then return end
-    local isinvis = list:get_string(name)
+    local isinvis = s:get_string(name)
     if isinvis == "1" then
         core.after(0.1,function()
             invis_on(player)
@@ -46,15 +46,15 @@ core.register_chatcommand("vanish",{
     func = function(name,param)
         if param == "" then param = name end
         local player = core.get_player_by_name(param)
-        local isinvis = list:get_string(param)
+        local isinvis = s:get_string(param)
         if isinvis == "1" then
-            list:set_string(param,"")
+            s:set_string(param,"")
             if player then
                 invis_off(player)
             end
             return true, "-!- "..param.." unvanished"
         else
-            list:set_string(param,"1")
+            s:set_string(param,"1")
             if player then
                 invis_on(player)
             end
@@ -66,10 +66,10 @@ core.register_chatcommand("vanished",{
     description = "Show list of vanished players",
     privs = {vanish=true},
     func = function(name,param)
-        local msg = "Vanished: "
-        local tabl = list:to_table().fields
+        local out = {}
+        local tabl = s:to_table().fields
         for nick,val in pairs(tabl) do
-            msg = msg..nick..", "
+            table.insert(out,nick)
         end
-        return true, msg:sub(1,-3)
+        return true, "Vanished: "..table.concat(out,", ")
 end})
