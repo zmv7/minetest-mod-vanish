@@ -71,5 +71,6 @@ core.register_chatcommand("vanished",{
         for nick,val in pairs(tabl) do
             table.insert(out,nick)
         end
+	table.sort(out)
         return true, "Vanished: "..table.concat(out,", ")
 end})
