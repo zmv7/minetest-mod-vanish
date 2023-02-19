@@ -21,8 +21,8 @@ vanish.off = function(player)
 			 	show_on_minimap = true,
 		 		pointable = true,
   		})
-	if core.get_modpath("ranks") then
-		ranks.update_ntag(name)
+	if core.get_modpath("nick_prefix") then
+		nick_prefix.update_ntag(name)
 	else
 		player:set_nametag_attributes({color={a=255,r=255,g=255,b=255},text = name})
 	end
